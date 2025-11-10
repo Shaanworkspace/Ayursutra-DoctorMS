@@ -2,6 +2,7 @@ package com.doctorms.Service;
 
 
 import com.doctorms.Configuration.RestTempLoadBalancer;
+import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
 import com.doctorms.Repository.DoctorRepository;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,17 +56,28 @@ public class DoctorService {
     public DoctorResponseDTO mapDoctorToDto(Doctor doctor) {
 
         // Agar doctor ke medicalRecords hain to unhe DTO me convert karo
-        List<Integer> recordResponses = List.of(); // agar null hai to empty list
+        List<DoctorMedicalRecordsDTO> recordResponses =  new ArrayList<>();
+        if (doctor.getMedicalRecordIds() != null && !doctor.getMedicalRecordIds().isEmpty()) {
+            for (Long recordId : doctor.getMedicalRecordIds()) {
+                DoctorMedicalRecordsDTO recordDTO = DoctorMedicalRecordsDTO.builder()
+                        .id(recordId)
+                        // you can fill these later with data from MedicalRecordMS via Feign
+                        .patientId(null)
+                        .status(null)
+                        .build();
+
+                recordResponses.add(recordDTO);
+            }
+        }
+
 
         // Ab doctor ka DTO banaao
         return new DoctorResponseDTO(
                 doctor.getId(),
-                doctor.getFirstName(),
-                doctor.getLastName(),
+                doctor.getFirstName() +" "+doctor.getLastName(),
                 doctor.getEmail(),
                 doctor.getPhoneNumber(),
                 doctor.getSpecialization(),
-                doctor.getQualification(),
                 doctor.getHospitalAffiliation(),
                 recordResponses
         );

@@ -11,14 +11,11 @@ import java.util.List;
 @AllArgsConstructor
 public class DoctorResponseDTO {
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String email;
     private String phoneNumber;
     private String specialization;
-    private String qualification;
     private String hospitalAffiliation;
 
-
-    private List<Integer> medicalRecords;
+    List<DoctorMedicalRecordsDTO> medicalRecords;
 }

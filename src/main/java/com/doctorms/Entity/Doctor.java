@@ -49,7 +49,7 @@ public class Doctor {
     private String hospitalAffiliation; // Hospital/clinic name
 
 //    Relations
-    private List<Integer> medicalRecordIds = new ArrayList<>();
+    private List<Long> medicalRecordIds = new ArrayList<>();
 
-    private List<Integer> therapyPlanIds = new ArrayList<>();
+    private List<Long> therapyPlanIds = new ArrayList<>();
 }

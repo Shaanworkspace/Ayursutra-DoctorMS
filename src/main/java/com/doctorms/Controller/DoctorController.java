@@ -1,6 +1,8 @@
 package com.doctorms.Controller;
 
 
+import com.doctorms.Client.MedicalRecordClient;
+import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
 import com.doctorms.Service.DoctorService;
@@ -17,18 +19,12 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final MedicalRecordClient medicalRecordClient;
 
-    @PostMapping
-    public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
-        try {
-            Doctor doctor1 = doctorService.createDoctor(doctor);
-            return ResponseEntity.status(HttpStatus.CREATED).body(doctor1);
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
-    }
 
+    /*
+    Get Methods
+     */
 
     @GetMapping
     public ResponseEntity<List<DoctorResponseDTO>> getAllDoctors() {
@@ -44,8 +40,42 @@ public class DoctorController {
         return ResponseEntity.ok(doctor);
     }
 
+    /*
+    Post Methods
+     */
+
+    @PostMapping
+    public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
+        try {
+            Doctor doctor1 = doctorService.createDoctor(doctor);
+            return ResponseEntity.status(HttpStatus.CREATED).body(doctor1);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
 
 
+
+    /*
+    Put Method
+     */
+
+    @PutMapping("/medical-record/{recordId}/status")
+    public ResponseEntity<DoctorMedicalRecordsDTO> statusChange(@PathVariable Long recordId,
+                                                                @RequestParam String status,@RequestParam Long doctorId){
+        try{
+            DoctorMedicalRecordsDTO updatedRecord = medicalRecordClient.medicalRecordStatusChange(recordId,status,doctorId);
+            return ResponseEntity.ok(updatedRecord);
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(null);
+        }
+    }
+
+
+    /*
+    Delete Mapping
+     */
     @DeleteMapping("/{id}")
     public void deleteDoctor(@PathVariable Long id) {
         doctorService.deleteDoctor(id);
