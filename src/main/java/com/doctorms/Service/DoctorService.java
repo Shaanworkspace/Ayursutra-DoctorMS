@@ -1,12 +1,15 @@
 package com.doctorms.Service;
 
 
-import com.doctorms.Configuration.RestTempLoadBalancer;
+import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
 import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
 import com.doctorms.Repository.DoctorRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DoctorService {
 
     @Autowired
@@ -22,6 +26,7 @@ public class DoctorService {
 
     @Autowired
     private RestTemplate restTemplate;
+
 
 
     public Doctor addDoctor(Doctor doctor) {
@@ -61,7 +66,6 @@ public class DoctorService {
             for (Long recordId : doctor.getMedicalRecordIds()) {
                 DoctorMedicalRecordsDTO recordDTO = DoctorMedicalRecordsDTO.builder()
                         .id(recordId)
-                        // you can fill these later with data from MedicalRecordMS via Feign
                         .patientId(null)
                         .status(null)
                         .build();
@@ -86,10 +90,10 @@ public class DoctorService {
 
     public Doctor login(String email, String password) {
         Doctor doctor = doctorRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("❌ Doctor not found with email: " + email));
+                .orElseThrow(() -> new IllegalArgumentException("!! Doctor not found with email: " + email));
 
         if (!doctor.getPassword().equals(password)) {
-            throw new IllegalArgumentException("❌ Invalid password");
+            throw new IllegalArgumentException("!! Invalid password");
         }
         return doctor;
     }
@@ -105,5 +109,18 @@ public class DoctorService {
 
     public void deleteDoctor(Long id) {
         doctorRepository.deleteById(id);
+    }
+
+    public void addMedicalRecordToDoctor(MedicalRecordRequestDTO medicalRecordRequestDTO) {
+        try {
+            Doctor doctor = doctorRepository.findById(medicalRecordRequestDTO.getDoctorId()).orElseThrow(()->new RuntimeException("Doctor not found with id: "+ medicalRecordRequestDTO.getDoctorId()));
+            doctor.getMedicalRecordIds().add(medicalRecordRequestDTO.getMedicalRecordId());
+            doctorRepository.save(doctor);
+        } catch (RuntimeException e){
+            ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
     }
 }
