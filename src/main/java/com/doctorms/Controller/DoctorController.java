@@ -2,6 +2,7 @@ package com.doctorms.Controller;
 
 
 import com.doctorms.Client.MedicalRecordClient;
+import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
 import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
@@ -43,6 +44,16 @@ public class DoctorController {
         return ResponseEntity.ok(doctor);
     }
 
+    @GetMapping("appointments/{id}")
+    public ResponseEntity<List<DoctorMedicalRecordsDTO>> getAppointmentByDoctorId(@PathVariable Long id) {
+        DoctorResponseDTO doctor = doctorService.getDoctorById(id);
+        if (doctor == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(doctor.getMedicalRecords());
+    }
+
+
     /*
     Post Methods
      */
@@ -81,6 +92,7 @@ public class DoctorController {
     public String statusChangeFallback(Exception exception){
         return exception.toString();
     }
+
 
 
     /*
