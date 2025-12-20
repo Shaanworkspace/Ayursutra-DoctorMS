@@ -17,13 +17,9 @@ public class SecurityConfig {
 		http
 				.csrf(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/public/**").permitAll()
-						.requestMatchers("/api/patients/**").hasRole("PATIENT")
-						.requestMatchers("/api/doctors/**").hasRole("DOCTOR")
+						.requestMatchers("/**").permitAll()
 						.anyRequest().authenticated()
-				)
-				.oauth2ResourceServer(oauth2 -> oauth2.jwt());
-
+				);
 		return http.build();
 	}
 }
