@@ -26,6 +26,10 @@ public class DoctorController {
     /*
     Get Methods
      */
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
+        return ResponseEntity.ok("DOCTOR SERVICE UP");
+    }
 
     @GetMapping
     public ResponseEntity<List<DoctorResponseDTO>> getAllDoctors() {
