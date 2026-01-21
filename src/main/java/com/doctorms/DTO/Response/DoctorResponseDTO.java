@@ -10,9 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DoctorResponseDTO {
-    private Long id;
-    private String name;
-    private String email;
+    private String userId;
     private String phoneNumber;
     private String specialization;
     private String hospitalAffiliation;

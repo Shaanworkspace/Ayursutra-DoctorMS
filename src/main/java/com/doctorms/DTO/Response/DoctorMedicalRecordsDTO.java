@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class DoctorMedicalRecordsDTO {
-
     private Long id;     // Medical record ID
     private Long patientId;       // Patient's full name
     private Status status;       // e.g. "PENDING", "ACTIVE", "COMPLETED"

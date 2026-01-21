@@ -2,6 +2,7 @@ package com.doctorms.Service;
 
 
 import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
+import com.doctorms.DTO.Request.RegisterRequestDTO;
 import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
@@ -20,22 +21,19 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
-
-    @Autowired
-    private DoctorRepository doctorRepository;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-
-
-    public Doctor addDoctor(Doctor doctor) {
+    private final DoctorRepository doctorRepository;
+    public Doctor createDoctor(RegisterRequestDTO doctor) {
         // Check if email already exists
-        if (doctorRepository.findByEmail(doctor.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Patient with this email already exists");
+        if (doctorRepository.findByUserId(doctor.getUserId()).isPresent()) {
+            throw new IllegalArgumentException("Patient with this id already exists");
         }
-        // Let timestamps be handled by entity @PrePersist
-        return doctorRepository.save(doctor);
+
+        Doctor doctor1 = Doctor.builder()
+                .userId(doctor.getUserId())
+                .password(doctor.getPassword())
+                .build();
+
+        return doctorRepository.save(doctor1);
     }
 
     public DoctorResponseDTO getDoctorById(Long id) {
@@ -44,23 +42,20 @@ public class DoctorService {
                 .orElse(null);
     }
 
-    // Get doctors by specialization
+
     public List<Doctor> getDoctorsBySpecialization(String specialization) {
         return doctorRepository.findBySpecialization(specialization);
     }
 
     public List<DoctorResponseDTO> getAllDoctors() {
-        // 1. Doctor entity nikaalo DB se
-        // 2. Har Doctor ko mapDoctorToDto() se DTO banake collect karo
         return doctorRepository.findAll()
                 .stream()
                 .map(this::mapDoctorToDto)    // entity -> DTO conversion
                 .collect(Collectors.toList());
     }
-    // Convert Doctor entity -> DoctorResponseDTO
-    public DoctorResponseDTO mapDoctorToDto(Doctor doctor) {
 
-        // Agar doctor ke medicalRecords hain to unhe DTO me convert karo
+
+    public DoctorResponseDTO mapDoctorToDto(Doctor doctor) {
         List<DoctorMedicalRecordsDTO> recordResponses =  new ArrayList<>();
         if (doctor.getMedicalRecordIds() != null && !doctor.getMedicalRecordIds().isEmpty()) {
             for (Long recordId : doctor.getMedicalRecordIds()) {
@@ -74,38 +69,14 @@ public class DoctorService {
             }
         }
 
-
-        // Ab doctor ka DTO banaao
         return new DoctorResponseDTO(
-                doctor.getId(),
-                doctor.getFirstName() +" "+doctor.getLastName(),
-                doctor.getEmail(),
+                doctor.getUserId(),
                 doctor.getPhoneNumber(),
                 doctor.getSpecialization(),
                 doctor.getHospitalAffiliation(),
                 recordResponses
         );
     }
-
-
-    public Doctor login(String email, String password) {
-        Doctor doctor = doctorRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("!! Doctor not found with email: " + email));
-
-        if (!doctor.getPassword().equals(password)) {
-            throw new IllegalArgumentException("!! Invalid password");
-        }
-        return doctor;
-    }
-
-    public Doctor createDoctor(Doctor doctor) {
-        return doctorRepository.save(doctor);
-    }
-
-    public List<Doctor> createDoctors(List<Doctor> doctors) {
-        return doctorRepository.saveAll(doctors);
-    }
-
 
     public void deleteDoctor(Long id) {
         doctorRepository.deleteById(id);
@@ -122,5 +93,9 @@ public class DoctorService {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
+    }
+
+    public Boolean checkDoctorById(String id) {
+        return doctorRepository.existsDoctorByUserId(id);
     }
 }

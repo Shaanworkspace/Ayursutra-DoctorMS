@@ -3,6 +3,7 @@ package com.doctorms.Controller;
 
 import com.doctorms.Client.MedicalRecordClient;
 import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
+import com.doctorms.DTO.Request.RegisterRequestDTO;
 import com.doctorms.DTO.Response.DoctorMedicalRecordsDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.Entity.Doctor;
@@ -44,6 +45,10 @@ public class DoctorController {
         }
         return ResponseEntity.ok(doctor);
     }
+    @GetMapping("/check/{id}")
+    public Boolean checkDoctorByUserId(@PathVariable String id) {
+	    return doctorService.checkDoctorById(id);
+    }
 
     @GetMapping("appointments/{id}")
     public ResponseEntity<List<DoctorMedicalRecordsDTO>> getAppointmentByDoctorId(@PathVariable Long id) {
@@ -60,7 +65,7 @@ public class DoctorController {
      */
 
     @PostMapping
-    public ResponseEntity<?> createDoctor(@RequestBody Doctor doctor) {
+    public ResponseEntity<?> addDoctor(@RequestBody RegisterRequestDTO doctor) {
         try {
             Doctor doctor1 = doctorService.createDoctor(doctor);
             return ResponseEntity.status(HttpStatus.CREATED).body(doctor1);

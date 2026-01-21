@@ -20,17 +20,9 @@ import java.util.List;
 public class Doctor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(nullable = false)
+    private String userId;
 
-    @Column(nullable = false, length = 100)  // Required & max size
-    private String firstName;
-
-    @Column(nullable = false, length = 100)
-    private String lastName;
-
-    @Column(nullable = false, unique = true, length = 150)  // Avoid duplicate emails
-    private String email;
 
     @Column(nullable = false)
     private String password;
