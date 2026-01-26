@@ -1,7 +1,7 @@
 package com.doctorms.Messaging;
 
 
-import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
+import com.doctorms.DTO.Response.MedicalRecord;
 import com.doctorms.Service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +16,11 @@ public class medicalRecordMessageConsumer {
 
 
     @RabbitListener(queues = "medicalRecordQueue")
-    public void consumeMessage(MedicalRecordRequestDTO dto){
+    public void consumeMessage(MedicalRecord dto){
 
         log.info("Received message from medicalRecordQueue: {}", dto);
 
         try {
-            doctorService.addMedicalRecordToDoctor(dto);
             log.info("Successfully added record {} to Doctor {}",
                     dto.getMedicalRecordId(), dto.getDoctorId());
         } catch (Exception ex) {

@@ -1,16 +1,17 @@
 package com.doctorms.Controller;
 
 
-import com.doctorms.DTO.Request.MedicalRecordRequestDTO;
 import com.doctorms.DTO.Request.RegisterRequestDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
-import com.doctorms.DTO.Response.MedicalRecordResponseDTO;
+import com.doctorms.DTO.Response.MedicalRecord;
 import com.doctorms.Entity.Doctor;
+import com.doctorms.Repository.DoctorRepository;
 import com.doctorms.Service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
 public class DoctorController {
 
 	private final DoctorService doctorService;
+	private final DoctorRepository doctorRepository;
 
 
 	/*
@@ -36,6 +38,20 @@ public class DoctorController {
 	public ResponseEntity<List<DoctorResponseDTO>> getAllDoctors() {
 		return ResponseEntity.ok(doctorService.getAllDoctors());
 	}
+	@GetMapping("/profile/me")
+	public DoctorResponseDTO getMyProfile(Authentication authentication) {
+		String email = (String) authentication.getPrincipal();
+		boolean exist = doctorRepository.existsDoctorByEmail(email);
+		if (!exist){
+			throw new RuntimeException(
+					"Doc not Exist for email: " + email
+			);
+		}
+		log.info("Doctor controller METHOD : GET , REQUEST : profile/me , principle of authentication with user id:{} ",email);
+		Doctor doctor = doctorRepository.findByEmail(email);
+		if (doctor == null) throw new RuntimeException("Doctor not found for email: " + email);
+		return doctorService.toDoctorResponseDTO(doctor);
+	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<?> getDoctorById(@PathVariable String id) {
@@ -47,19 +63,18 @@ public class DoctorController {
 	}
 
 	@GetMapping("/check/{id}")
-	public Boolean checkDoctorByUserId(@PathVariable String id) {
+	public boolean checkDoctorByUserId(@PathVariable String id) {
 		return doctorService.checkDoctorById(id);
 	}
 
 	@GetMapping("/appointments/{id}")
-	public ResponseEntity<List<MedicalRecordResponseDTO>> getAppointmentByDoctorId(@PathVariable String id) {
+	public ResponseEntity<List<MedicalRecord>> getAppointmentByDoctorId(@PathVariable String id) {
 		DoctorResponseDTO doctor = doctorService.getDoctorById(id);
 		if (doctor == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 		return ResponseEntity.ok(doctor.getMedicalRecords());
 	}
-
 
     /*
     Post Methods
@@ -71,23 +86,6 @@ public class DoctorController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.toDoctorResponseDTO(doctor1));
 	}
 
-
-
-    /*
-    Put Method
-     */
-
-
-	@PutMapping("/medical-record/add")
-	public void addMedicalRecord(@RequestBody MedicalRecordRequestDTO medicalRecordRequestDTO){
-		Doctor doctor = doctorService.findDoctorByUserId(medicalRecordRequestDTO.getDoctorId());
-		if(doctor==null) {
-			log.error("Doctor not found with id :{}",medicalRecordRequestDTO.getDoctorId());
-			return;
-		}
-		doctor.getMedicalRecordIds().add(medicalRecordRequestDTO.getMedicalRecordId());
-		log.info("Added SuccessFully");
-	}
 
 	/*
 	Delete Mapping

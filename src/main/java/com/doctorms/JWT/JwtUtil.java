@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Component
 public class JwtUtil {
@@ -26,6 +27,16 @@ public class JwtUtil {
 				.parseSignedClaims(token)
 				.getPayload();
 	}
+	public String generateServiceToServiceToken(String serviceName) {
+		return Jwts.builder()
+				.subject(serviceName)
+				.claim("type", "SERVICE")
+				.issuedAt(new Date())
+				.expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+				.signWith(getSecretKey())
+				.compact();
+	}
+
 
 	public boolean isServiceToken(Claims claims) {
 		return "SERVICE".equals(claims.get("type"));

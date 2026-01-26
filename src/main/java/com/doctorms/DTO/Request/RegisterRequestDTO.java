@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class RegisterRequestDTO {
+    private String email;
     private String userId;
     private String name;
     private String password;

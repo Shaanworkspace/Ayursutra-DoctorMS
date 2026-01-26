@@ -12,11 +12,14 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class DoctorResponseDTO {
+    private String email;
     private String userId;
     private String phoneNumber;
     private String name;
     private String specialization;
     private String hospitalAffiliation;
+    @Builder.Default
+    private String role="DOCTOR";
 
-    List<MedicalRecordResponseDTO> medicalRecords;
+    List<MedicalRecord> medicalRecords;
 }

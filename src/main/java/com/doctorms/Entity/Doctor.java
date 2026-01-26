@@ -1,5 +1,6 @@
 package com.doctorms.Entity;
 
+import com.doctorms.DTO.Response.MedicalRecord;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -24,6 +25,8 @@ public class Doctor {
 
     private String doctorName;
 
+    @Column(unique = true)
+    private String email;
     @Column(nullable = true)
     private String password;
 
@@ -39,6 +42,5 @@ public class Doctor {
     @Column(nullable = true, length = 200)
     private String hospitalAffiliation;
 
-    private List<String> medicalRecordIds = new ArrayList<>();
     private List<String> therapyPlanIds = new ArrayList<>();
 }
