@@ -11,10 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<Doctor, Long> {
+public interface DoctorRepository extends JpaRepository<Doctor, String> {
     List<Doctor> findBySpecialization(String specialization);
 
-    Boolean existsDoctorByUserId(String userId);
+    boolean existsDoctorByUserId(String userId);
 
-    MergedAnnotation<Annotation> findByUserId(String userId);
+    Doctor findByUserId(String userId);
 }

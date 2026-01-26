@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 @Builder
 public class MedicalRecordRequestDTO {
 
-    private Long medicalRecordId;
-    private Long patientId;              // ID of the patient booking the appointment
-    private Long doctorId;               // ID of the doctor being booked
+    private String medicalRecordId;
+    private String patientId;              // ID of the patient booking the appointment
+    private String doctorId;               // ID of the doctor being booked
 
     private LocalDateTime visitDate;     // Preferred appointment date & time
     private String symptoms;             // Description of symptoms or reason for visit

@@ -20,28 +20,25 @@ import java.util.List;
 public class Doctor {
 
     @Id
-    @Column(nullable = false)
     private String userId;
 
+    private String doctorName;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
-    @Column(nullable = false, unique = true, length = 15)   // Mobile number
+    @Column(nullable = true, length = 15)
     private String phoneNumber;
 
-    @Column(length = 100)   // E.g. "Cardiologist", "Dentist"
+    @Column(nullable = true, length = 100)
     private String specialization;
 
+    @Column(nullable = true, length = 50)
+    private String qualification;
 
-    @Column(length = 50)
-    private String qualification;  // e.g., "MBBS, MD"
+    @Column(nullable = true, length = 200)
+    private String hospitalAffiliation;
 
-    @Column(length = 200)
-    private String hospitalAffiliation; // Hospital/clinic name
-
-//    Relations
-    private List<Long> medicalRecordIds = new ArrayList<>();
-
-    private List<Long> therapyPlanIds = new ArrayList<>();
+    private List<String> medicalRecordIds = new ArrayList<>();
+    private List<String> therapyPlanIds = new ArrayList<>();
 }
