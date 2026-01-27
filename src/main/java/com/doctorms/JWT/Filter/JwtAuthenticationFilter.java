@@ -57,12 +57,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			} else {
 				log.info("User token for userId/email: {}", subject);
+				String role = claims.get("role", String.class);
+
+				if (role == null) {
+					throw new RuntimeException("Role missing in JWT");
+				}
+
 				UsernamePasswordAuthenticationToken auth =
 						new UsernamePasswordAuthenticationToken(
 								subject,
 								null,
-								List.of(() -> "ROLE_USER")
+								List.of(() -> "ROLE_" + role)
 						);
+
+				log.info(
+						"We set this request : {} as role : ROLE_{}",
+						request.getRequestURI(),
+						role
+				);
 
 				SecurityContextHolder.getContext().setAuthentication(auth);
 			}
