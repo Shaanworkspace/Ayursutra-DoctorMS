@@ -19,7 +19,7 @@ public class SecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.cors(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/**").permitAll()
+						.requestMatchers("/api/doctors/health").permitAll()
 						.anyRequest().authenticated()
 				);
 		return http.build();
