@@ -11,7 +11,6 @@ WORKDIR /var/task
 # JAR ko copy karo
 COPY --from=builder /app/target/DoctorMS-0.0.1-SNAPSHOT.jar app.jar
 
-
 RUN jar -xf app.jar && rm app.jar
 
 # Handler ka path
