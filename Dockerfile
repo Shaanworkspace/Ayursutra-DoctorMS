@@ -11,7 +11,7 @@ WORKDIR /var/task
 # JAR ko copy karo
 COPY --from=builder /app/target/DoctorMS-0.0.1-SNAPSHOT.jar app.jar
 
-# JAR ko extract (unzip) karo seedha /var/task mein
+
 # Ye step BOOT-INF se classes nikal kar bahar le aayega
 RUN jar -xf app.jar && rm app.jar
 
