@@ -12,7 +12,6 @@ WORKDIR /var/task
 COPY --from=builder /app/target/DoctorMS-0.0.1-SNAPSHOT.jar app.jar
 
 
-# Ye step BOOT-INF se classes nikal kar bahar le aayega
 RUN jar -xf app.jar && rm app.jar
 
 # Handler ka path
