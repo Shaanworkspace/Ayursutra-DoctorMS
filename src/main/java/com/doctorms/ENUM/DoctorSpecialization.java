@@ -1,0 +1,12 @@
+package com.doctorms.ENUM;
+
+
+public enum DoctorSpecialization {
+	CARDIOLOGY,
+	DERMATOLOGY,
+	NEUROLOGY,
+	ORTHOPEDICS,
+	PEDIATRICS,
+	PSYCHIATRY,
+	GENERAL_MEDICINE
+}

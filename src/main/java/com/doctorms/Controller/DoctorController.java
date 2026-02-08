@@ -4,6 +4,8 @@ package com.doctorms.Controller;
 import com.doctorms.DTO.Request.RegisterRequestDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.DTO.Response.MedicalRecord;
+import com.doctorms.ENUM.Availability;
+import com.doctorms.ENUM.DoctorSpecialization;
 import com.doctorms.Entity.Doctor;
 import com.doctorms.Repository.DoctorRepository;
 import com.doctorms.Service.DoctorService;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -32,6 +35,20 @@ public class DoctorController {
 	@GetMapping("/health")
 	public ResponseEntity<String> health() {
 		return ResponseEntity.ok("DOCTOR SERVICE UP");
+	}
+
+	@GetMapping("/enums/specializations")
+	public String[] getSpecializations() {
+		return Arrays.stream(DoctorSpecialization.values())
+				.map(Enum::name)
+				.toArray(String[]::new);
+	}
+
+	@GetMapping("/enums/availability")
+	public String[] getAvailability() {
+		return Arrays.stream(Availability.values())
+				.map(Enum::name)
+				.toArray(String[]::new);
 	}
 
 	@GetMapping
@@ -67,14 +84,6 @@ public class DoctorController {
 		return doctorService.checkDoctorById(id);
 	}
 
-	@GetMapping("/appointments/{id}")
-	public ResponseEntity<List<MedicalRecord>> getAppointmentByDoctorId(@PathVariable String id) {
-		DoctorResponseDTO doctor = doctorService.getDoctorById(id);
-		if (doctor == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
-		return ResponseEntity.ok(doctor.getMedicalRecords());
-	}
 
     /*
     Post Methods
@@ -84,6 +93,14 @@ public class DoctorController {
 	public ResponseEntity<DoctorResponseDTO> addDoctor(@RequestBody RegisterRequestDTO doctor) {
 		Doctor doctor1 = doctorService.createDoctor(doctor);
 		return ResponseEntity.status(HttpStatus.CREATED).body(doctorService.toDoctorResponseDTO(doctor1));
+	}
+	@PutMapping("/profile/me")
+	public DoctorResponseDTO updateMyProfile(
+			Authentication authentication,
+			@RequestBody com.doctorms.DTO.Request.DoctorUpdateDTO dto
+	) {
+		String email = (String) authentication.getPrincipal();
+		return doctorService.updateDoctorProfile(email, dto);
 	}
 
 

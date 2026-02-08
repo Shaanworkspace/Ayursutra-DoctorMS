@@ -17,9 +17,8 @@ public class DoctorResponseDTO {
     private String phoneNumber;
     private String name;
     private String specialization;
+    private String availability;
     private String hospitalAffiliation;
     @Builder.Default
     private String role="DOCTOR";
-
-    List<MedicalRecord> medicalRecords;
 }

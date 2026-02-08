@@ -46,6 +46,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers(
+								"/api/doctors/enums/**",
 								"/api/doctors/login",
 								"/api/doctors/register",
 								"/api/doctors/health",

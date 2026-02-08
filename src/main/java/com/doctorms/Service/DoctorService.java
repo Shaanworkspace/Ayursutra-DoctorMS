@@ -2,9 +2,12 @@ package com.doctorms.Service;
 
 
 import com.doctorms.Client.PatientClient;
+import com.doctorms.DTO.Request.DoctorUpdateDTO;
 import com.doctorms.DTO.Request.RegisterRequestDTO;
 import com.doctorms.DTO.Response.DoctorResponseDTO;
 import com.doctorms.DTO.Response.MedicalRecord;
+import com.doctorms.ENUM.Availability;
+import com.doctorms.ENUM.DoctorSpecialization;
 import com.doctorms.Entity.Doctor;
 import com.doctorms.Repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
@@ -60,20 +63,51 @@ public class DoctorService {
         return doctorRepository.existsDoctorByUserId(id);
     }
 
-
     public DoctorResponseDTO toDoctorResponseDTO(Doctor doctor) {
-        log.info("Fetching medical Record from patient");
-        List<MedicalRecord> medicalRecordResponseDTOList = patientClient.medicalRecordsByDoctorId(doctor.getUserId());
-        log.info("Got Medical Record : {}",medicalRecordResponseDTOList);
+        log.info("Fetching medical records for doctor: {}", doctor.getUserId());
+
         return DoctorResponseDTO.builder()
                 .email(doctor.getEmail())
                 .userId(doctor.getUserId())
                 .name(doctor.getDoctorName())
                 .phoneNumber(doctor.getPhoneNumber())
-                .specialization(doctor.getSpecialization())
+                .specialization(doctor.getSpecialization() != null ? doctor.getSpecialization().name() : null)
+                .availability(doctor.getAvailability() != null ? doctor.getAvailability().name() : null)
                 .hospitalAffiliation(doctor.getHospitalAffiliation())
-                .medicalRecords(medicalRecordResponseDTOList)
                 .build();
+    }
+
+    public DoctorResponseDTO updateDoctorProfile(String email, DoctorUpdateDTO dto) {
+
+        Doctor doctor = doctorRepository.findByEmail(email);
+
+        if (doctor == null) {
+            throw new RuntimeException("Doctor not found");
+        }
+
+        if (dto.getSpecialization() != null) {
+            doctor.setSpecialization(
+                    DoctorSpecialization.valueOf(dto.getSpecialization())
+            );
+        }
+
+        if (dto.getAvailability() != null) {
+            doctor.setAvailability(
+                    Availability.valueOf(dto.getAvailability())
+            );
+        }
+
+        if (dto.getHospitalAffiliation() != null) {
+            doctor.setHospitalAffiliation(dto.getHospitalAffiliation());
+        }
+
+        if (dto.getPhoneNumber() != null) {
+            doctor.setPhoneNumber(dto.getPhoneNumber());
+        }
+
+        Doctor saved = doctorRepository.save(doctor);
+
+        return toDoctorResponseDTO(saved);
     }
 
 }

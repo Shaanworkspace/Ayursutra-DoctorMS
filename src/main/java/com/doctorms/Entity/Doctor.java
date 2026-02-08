@@ -1,6 +1,7 @@
 package com.doctorms.Entity;
 
-import com.doctorms.DTO.Response.MedicalRecord;
+import com.doctorms.ENUM.DoctorSpecialization;
+import com.doctorms.ENUM.Availability;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
@@ -27,14 +28,16 @@ public class Doctor {
 
     @Column(unique = true)
     private String email;
+
     @Column(nullable = true)
     private String password;
 
     @Column(nullable = true, length = 15)
     private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = true, length = 100)
-    private String specialization;
+    private DoctorSpecialization specialization;
 
     @Column(nullable = true, length = 50)
     private String qualification;
@@ -42,5 +45,10 @@ public class Doctor {
     @Column(nullable = true, length = 200)
     private String hospitalAffiliation;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true, length = 20)
+    private Availability availability;
+
+    @ElementCollection
     private List<String> therapyPlanIds = new ArrayList<>();
 }
